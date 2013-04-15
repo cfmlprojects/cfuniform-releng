@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<src>
+	<project>
+		<src dest="@src.dir@/cfUniForm" type="git" 
+		uri="git://github.com/QuackFuzed/cfUniForm.git" 
+		user="" password="" />
+	</project>
+	<sources>
+	</sources>
+</src>

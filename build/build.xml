@@ -1,0 +1,43 @@
+<project name="distro.build" default="build" basedir="./" xmlns:antcontrib="antlib:net.sf.antcontrib">
+
+	<loadproperties srcfile="build.properties"/>
+	<import file="${cfdistro.build.file}"/>
+
+	<target name="build" depends="cfdistro.build">
+		<mapping physical="@src.dir@/cfUniForm" virtual="/cfUniForm"/>
+	</target>	
+
+	<target name="build.mvn.release" depends="project.update, build">
+	    <property name="mvn.repo.dest" value="local" />
+	    <property name="mvn.repo.dest" value="remote" />
+	    <property name="mvn.repo.id" value="mvn.repo.${mvn.repo.dest}" />
+	    <property name="maven.repo.local" location="${cfdistro.basedir}/artifacts" />
+		<mvn-repo id="mvn.repo.local" url="file://${maven.repo.local}/" />
+	   	<property name="mvn.type" value="release" />
+
+	   	<delete file="${dist.dir}/cfUniForm.zip" />
+		<zip destfile="${dist.dir}/cfUniForm.zip" basedir="${src.dir}" />
+
+		<pom-and-deploy pomid="cfUniForm.pom" packaging="zip" artifact="${dist.dir}/cfUniForm.zip"
+		 groupId="org.riaforge" artifactId="cfuniform" version="1.0" name="cfuniform"/>
+		
+	 	<!--  create an extension -->
+		<delete dir="${basedir}/extensionbase/" />
+		<mkdir dir="${basedir}/extensionbase/" />
+		<copy todir="${basedir}/extensionbase/applications/cfUniForm">
+			<fileset dir="${src.dir}/cfUniForm" />
+		</copy>
+		<antcontrib:runtarget target="extension.build" />
+		<delete dir="${basedir}/extensionbase/" />
+	
+        <!-- add the extension as well -->
+		<mvn-put artifact="${extension.dist}/${extension.archive}"
+			packaging="zip" repoId="${mvn.repo.id}" groupId="cfml.extensions"
+			artifactId="cfuniform" version="${extension.version}" />
+
+	</target>
+
+
+
+		
+</project>
